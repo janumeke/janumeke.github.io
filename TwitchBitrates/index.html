@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bitrate Calculator</title>
+        <style type="text/css">
+            label {
+                margin-right: 12px;
+            }
+            select{
+                font-size: 16px;
+                height: 20px;
+            }
+            div {
+                margin: 15px;
+            }
+            button {
+                margin-left: 15px;
+            }
+        </style>
+        <script>
+            const LOCALIZATION = {
+                "TITLE": "位元速率計算器",
+                "LABEL": {
+                    "RESOLUTION": "解析度",
+                    "FRAMERATE": "FPS",
+                    "GAMETYPE": {
+                        0: "遊戲類型",
+                        "2D": "2D",
+                        "TOPDOWN": "俯視視角",
+                        "THIRD": "第三人稱視角",
+                        "FIRST": "第一人稱視角",
+                    },
+                    "PREFERENCE": {
+                        0: "偏好",
+                        "STABLE": "觀看穩定",
+                        "LOWER": "更低位元速率",
+                    },
+                    "RATECONTROL": "位元率控制",
+                    "BITRATE": "位元速率",
+                    "MAXBITRATE": "最大位元速率",
+                    "CALCULATE": "計算",
+                },
+            };
+            window.addEventListener("load", function(){
+                document.title = LOCALIZATION.TITLE;
+                document.getElementById("LABEL_RESOLUTION").innerHTML = `${LOCALIZATION.LABEL.RESOLUTION}:`;
+                document.getElementById("LABEL_FRAMERATE").innerHTML = `${LOCALIZATION.LABEL.FRAMERATE}:`;
+                document.getElementById("LABEL_GAMETYPE").innerHTML = `${LOCALIZATION.LABEL.GAMETYPE[0]}:`;
+                document.getElementById("LABEL_GAMETYPE_2D").innerHTML = LOCALIZATION.LABEL.GAMETYPE["2D"];
+                document.getElementById("LABEL_GAMETYPE_TOPDOWN").innerHTML = LOCALIZATION.LABEL.GAMETYPE["TOPDOWN"];
+                document.getElementById("LABEL_GAMETYPE_THIRD").innerHTML = LOCALIZATION.LABEL.GAMETYPE["THIRD"];
+                document.getElementById("LABEL_GAMETYPE_FIRST").innerHTML = LOCALIZATION.LABEL.GAMETYPE["FIRST"];
+                document.getElementById("LABEL_PREFERENCE").innerHTML = `${LOCALIZATION.LABEL.PREFERENCE[0]}:`;
+                document.getElementById("LABEL_PREFERENCE_STABLE").innerHTML = LOCALIZATION.LABEL.PREFERENCE.STABLE;
+                document.getElementById("LABEL_PREFERENCE_LOWER").innerHTML = LOCALIZATION.LABEL.PREFERENCE.LOWER;
+                document.getElementById("LABEL_CALCULATE").innerHTML = LOCALIZATION.LABEL.CALCULATE;
+            });
+        </script>
+        <script>
+            const base = {
+                "720": {
+                    "30": {
+                        "2d": 2000,
+                        "topdown": 2500,
+                        "3rd": 3500,
+                        "1st": 4000,
+                    },
+                    "60": {
+                        "2d": 3500,
+                        "topdown": 4000,
+                        "3rd": 5000,
+                        "1st": 5500,
+                    },
+                },
+                "1080": {
+                    "30": {
+                        "2d": 3000,
+                        "topdown": 3500,
+                        "3rd": 4500,
+                        "1st": 5000,
+                    },
+                    "60": {
+                        "2d": 4500,
+                        "topdown": 5000,
+                        "3rd": 6000,
+                        "1st": 6500,
+                    },
+                },
+            };
+            const delta = {
+                "720": {
+                    "2d": 500,
+                    "topdown": 1000,
+                    "3rd": 1500,
+                    "1st": 2000,
+                },
+                "1080": {
+                    "2d": 1000,
+                    "topdown": 1500,
+                    "3rd": 2000,
+                    "1st": 2500,
+                },
+            };
+            function Calc(){
+                let res = document.getElementById("resolution").value;
+                let fps = document.getElementById("framerate").value;
+                let type = document.getElementById("gametype").value;
+                let bitrate = base[res][fps][type];
+                if(document.getElementById("lower").checked){
+                    if(res == "720")
+                        bitrate -= 500;
+                    if(res == "1080")
+                        bitrate -= 1000;
+                    if(fps == "60")
+                        bitrate -= 500;
+                }
+                document.getElementById("output").innerHTML = `${LOCALIZATION.LABEL.RATECONTROL}: `;
+                let d = delta[res][type];
+                if(document.getElementById("stable").checked){
+                    d = Math.ceil((d / 2) / 500) * 500;
+                    document.getElementById("output").innerHTML += `CBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate+d}`;
+                }
+                else{
+                    document.getElementById("output").innerHTML += `VBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate}<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${bitrate+d}`;
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <label for="resolution" id="LABEL_RESOLUTION">Resolution:</label>
+            <select id="resolution">
+                <option value="720">1280x720</option>
+                <option value="1080">1920x1080</option>
+            </select>
+        </div>
+        <div>
+            <label for="framerate" id="LABEL_FRAMERATE">Frame rate:</label>
+            <select id="framerate">
+                <option value="30">30</option>
+                <option value="60">60</option>
+            </select>
+        </div>
+        <div>
+            <label for="gametype" id="LABEL_GAMETYPE">Type of game:</label>
+            <select id="gametype">
+                <option value="2d" id="LABEL_GAMETYPE_2D">2D</option>
+                <option value="topdown" id="LABEL_GAMETYPE_TOPDOWN">Top-down perspective</option>
+                <option value="3rd" id="LABEL_GAMETYPE_THIRD">Third-person perspective</option>
+                <option value="1st" id="LABEL_GAMETYPE_FIRST">First-person perspective</option>
+            </select>
+        </div>
+        <div>
+            <label id="LABEL_PREFERENCE">Prefer:</label>
+            <input type="checkbox" checked id="stable">
+            <label for="stable" id="LABEL_PREFERENCE_STABLE">Stable viewing</label>
+            <input type="checkbox" id="lower">
+            <label for="lower" id="LABEL_PREFERENCE_LOWER">Lower bitrate</label>
+        </div>
+        <button onclick="Calc()" id="LABEL_CALCULATE">Calculate</button>
+        <div id="output"></div>
+    </body>
+</html>
