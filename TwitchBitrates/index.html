@@ -8,7 +8,6 @@
             }
             select{
                 font-size: 16px;
-                height: 20px;
             }
             div {
                 margin: 15px;
@@ -107,21 +106,20 @@
                 let type = document.getElementById("gametype").value;
                 let bitrate = base[res][fps][type];
                 if(document.getElementById("lower").checked){
-                    if(res == "720")
-                        bitrate -= 500;
+                    bitrate -= 500;
                     if(res == "1080")
-                        bitrate -= 1000;
+                        bitrate -= 500;
                     if(fps == "60")
                         bitrate -= 500;
                 }
-                document.getElementById("output").innerHTML = `${LOCALIZATION.LABEL.RATECONTROL}: `;
+                document.getElementById("output").innerHTML = `${typeof LOCALIZATION === "undefined" ? "Rate Control" : LOCALIZATION.LABEL.RATECONTROL}: `;
                 let d = delta[res][type];
                 if(document.getElementById("stable").checked){
                     d = Math.ceil((d / 2) / 500) * 500;
-                    document.getElementById("output").innerHTML += `CBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate+d}`;
+                    document.getElementById("output").innerHTML += `CBR<br>${typeof LOCALIZATION === "undefined" ? "Bitrate" : LOCALIZATION.LABEL.BITRATE}: ${bitrate+d}`;
                 }
                 else{
-                    document.getElementById("output").innerHTML += `VBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate}<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${bitrate+d}`;
+                    document.getElementById("output").innerHTML += `VBR<br>${typeof LOCALIZATION === "undefined" ? "Bitrate" : LOCALIZATION.LABEL.BITRATE}: ${bitrate}<br>${typeof LOCALIZATION === "undefined" ? "Max Bitrate" : LOCALIZATION.LABEL.MAXBITRATE}: ${bitrate+d}`;
                 }
             }
         </script>
