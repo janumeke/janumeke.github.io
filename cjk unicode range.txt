@@ -1,0 +1,18 @@
+Unicode block			Range
+				HEX		DEC
+Common
+-Latin
+--Basic Latin			0000-007F	0-127
+-Mixed
+--CJK Symbols and Punctuation	3000-303F	12288-12351
+Chinese
+-Han
+--CJK Unified Ideographs	4E00-9FFF	19968-40959
+-Bopomofo			3100-312F	12544-12591
+Japanese
+-Hiragana			3040-309F	12352-12447
+-Katakana			30A0-30FF	12448-12543
+Korean
+-Hangul
+--Hangul Jamo			1100-11FF	4352-4607
+--Hangul Syllables		AC00-D7A3	44032-55203
