@@ -1,5 +1,5 @@
 const LOCALIZATION = {
-    "TITLE": "位元速率計算器",
+    "TITLE": "推薦位元速率",
     "LABEL": {
         "RESOLUTION": "解析度",
         "FRAMERATE": "FPS",
@@ -7,7 +7,7 @@ const LOCALIZATION = {
             0: "遊戲類型",
             "IRL": "IRL",
             "2D": "2D",
-            "TopDown": "俯視視角",
+            "TopDown": "俯瞰視角",
             "3rd": "第三人稱視角",
             "1st": "第一人稱視角",
         },
