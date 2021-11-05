@@ -23,115 +23,110 @@
             if(typeof LOCALIZATION !== 'undefined'){
                 window.addEventListener('load', function(){
                     document.title = LOCALIZATION.TITLE;
-                    document.getElementById('LABEL_RESOLUTION').innerHTML = `${LOCALIZATION.LABEL.RESOLUTION}:`;
-                    document.getElementById('LABEL_FRAMERATE').innerHTML = `${LOCALIZATION.LABEL.FRAMERATE}:`;
                     document.getElementById('LABEL_GAMETYPE').innerHTML = `${LOCALIZATION.LABEL.GAMETYPE[0]}:`;
+                    document.getElementById('LABEL_GAMETYPE_IRL').innerHTML = LOCALIZATION.LABEL.GAMETYPE['IRL'];
                     document.getElementById('LABEL_GAMETYPE_2D').innerHTML = LOCALIZATION.LABEL.GAMETYPE['2D'];
-                    document.getElementById('LABEL_GAMETYPE_TOPDOWN').innerHTML = LOCALIZATION.LABEL.GAMETYPE['TOPDOWN'];
-                    document.getElementById('LABEL_GAMETYPE_THIRD').innerHTML = LOCALIZATION.LABEL.GAMETYPE['THIRD'];
-                    document.getElementById('LABEL_GAMETYPE_FIRST').innerHTML = LOCALIZATION.LABEL.GAMETYPE['FIRST'];
-                    document.getElementById('LABEL_PREFERENCE').innerHTML = `${LOCALIZATION.LABEL.PREFERENCE[0]}:`;
-                    document.getElementById('LABEL_PREFERENCE_STABLE').innerHTML = LOCALIZATION.LABEL.PREFERENCE.STABLE;
-                    document.getElementById('LABEL_PREFERENCE_LOWER').innerHTML = LOCALIZATION.LABEL.PREFERENCE.LOWER;
-                    document.getElementById('LABEL_CALCULATE').innerHTML = LOCALIZATION.LABEL.CALCULATE;
+                    document.getElementById('LABEL_GAMETYPE_TOPDOWN').innerHTML = LOCALIZATION.LABEL.GAMETYPE['TopDown'];
+                    document.getElementById('LABEL_GAMETYPE_THIRD').innerHTML = LOCALIZATION.LABEL.GAMETYPE['3rd'];
+                    document.getElementById('LABEL_GAMETYPE_FIRST').innerHTML = LOCALIZATION.LABEL.GAMETYPE['1st'];
+                    document.getElementById('LABEL_OPTIONS').innerHTML = `${LOCALIZATION.LABEL.OPTIONS}:`;
+                    document.getElementById('LABEL_PREFERENCE_STABLE').innerHTML = `${LOCALIZATION.LABEL.PREFERENCE.STABLE}:`;
                 });
             }
-            
-            function Output(bitrate, max){
-                if(typeof LOCALIZATION === 'undefined'){
-                    document.getElementById('output').innerHTML = 'Rate Control: ';
-                    if(bitrate == max)
-                        document.getElementById('output').innerHTML += `CBR<br>Bitrate: ${bitrate} Kbps`;
-                    else
-                        document.getElementById('output').innerHTML += `VBR<br>Bitrate: ${bitrate} Kbps<br>Max Bitrate: ${max} Kbps`;
+        </script>
+        <script src="table.js"></script>
+        <script>
+            function UpdateOptions(){
+                const options = document.querySelector('#options');
+                while(options.firstChild){
+                    options.removeChild(options.lastChild);
                 }
-                else{
-                    document.getElementById('output').innerHTML = `${LOCALIZATION.LABEL.RATECONTROL}: `;
-                    if(bitrate == max)
-                        document.getElementById('output').innerHTML += `CBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate} Kbps`;
-                    else
-                        document.getElementById('output').innerHTML += `VBR<br>${LOCALIZATION.LABEL.BITRATE}: ${bitrate} Kbps<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${max} Kbps`;
+                const type = document.querySelector('#gametype').value;
+                for(let option of TABLE[type].options){
+                    const newOption = document.createElement('option');
+                    newOption.value = option;
+                    newOption.text = option;
+                    options.appendChild(newOption);
+                    if(option == TABLE[type].default){
+                        newOption.selected = true;
+                        UpdateStableCheckbox();
+                    }
                 }
             }
-        </script>
-        <script>
-            function Calc(){
-                const res = document.getElementById('resolution').value;
-                const fps = document.getElementById('framerate').value;
-                const type = document.getElementById('gametype').value;
-                
-                let base = 1750,
-                    deltaLow = -500,
-                    deltaMax = 500;
-                if(res === '1080'){
-                    base += 750;
-                    deltaLow += -250;
-                    deltaMax += 250;
-                }
-                if(fps === '60'){
-                    base += 1250;
-                    deltaMax += 500;
-                }
-                switch(type){
-                    case 'topdown':
-                        base += 750;
-                        deltaLow += -250;
-                        deltaMax += 500;
-                        break;
-                    case '3rd':
-                        base += 1500;
-                        deltaMax += 1250;
-                        break;
-                    case '1st':
-                        base += 1750;
-                        deltaLow += 250;
-                        deltaMax += 1750;
-                        break;
-                }
 
-                let bitrate = base + (document.getElementById('lower').checked ? deltaLow : 0);
-                let max = bitrate + deltaMax;
-                if(document.getElementById('stable').checked){
-                    bitrate = (bitrate + max) / 2;
-                    bitrate = Math.ceil(bitrate / 250) * 250;
-                    max = bitrate;
+            window.addEventListener('load', UpdateOptions);
+
+            function UpdateStableCheckbox(){
+                const type = document.querySelector('#gametype').value;
+                const option = document.querySelector('#options').value;
+                const stableCheckbox = document.querySelector('#stablecheckbox');
+                if(TABLE[type][option].stable){
+                    stableCheckbox.style.display = '';
                 }
-                Output(bitrate, max);
+                else{
+                    stableCheckbox.style.display = 'none';
+                }
+                Output();
+            }
+
+            function Output(){
+                const type = document.querySelector('#gametype').value;
+                const option = document.querySelector('#options').value;
+                const stable = document.querySelector('#stable').checked;
+                const output = document.querySelector('#output');
+                const params = TABLE[type][option];
+                if(typeof LOCALIZATION === 'undefined'){
+                    output.innerHTML = `Resolution: ${params.resolution}`;
+                    output.innerHTML += `<br>Frame rate: ${params.framerate}`;
+                    output.innerHTML += '<br>Rate Control: ';
+                    if(params.vbs){
+                        output.innerHTML += `VBR<br>Bitrate: ${params.bitrate} Kbps`;
+                        if(!params.stable || !stable)
+                            output.innerHTML += `<br>Max Bitrate: ${params.defaultMax} Kbps`;
+                        else
+                        output.innerHTML += `<br>Max Bitrate: ${params.stableMax} Kbps`;
+                    }
+                    else{
+                        output.innerHTML += `CBR<br>Bitrate: ${params.bitrate} Kbps`;
+                    }
+                }
+                else{
+                    output.innerHTML = `${LOCALIZATION.LABEL.RESOLUTION}: ${params.resolution}`;
+                    output.innerHTML += `<br>${LOCALIZATION.LABEL.FRAMERATE}: ${params.framerate}`;
+                    output.innerHTML += `<br>${LOCALIZATION.LABEL.RATECONTROL}: `;
+                    if(params.vbs){
+                        output.innerHTML += `VBR<br>${LOCALIZATION.LABEL.BITRATE}: ${params.bitrate} Kbps`;
+                        if(!params.stable || !stable)
+                            output.innerHTML += `<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${params.defaultMax} Kbps`;
+                        else
+                        output.innerHTML += `<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${params.stableMax} Kbps`;
+                    }
+                    else{
+                        output.innerHTML += `CBR<br>${LOCALIZATION.LABEL.BITRATE}: ${params.bitrate} Kbps`;
+                    }
+                }
             }
         </script>
     </head>
     <body>
         <div>
-            <label for="resolution" id="LABEL_RESOLUTION">Resolution:</label>
-            <select id="resolution">
-                <option value="720">1280x720</option>
-                <option value="1080">1920x1080</option>
-            </select>
-        </div>
-        <div>
-            <label for="framerate" id="LABEL_FRAMERATE">Frame rate:</label>
-            <select id="framerate">
-                <option value="30">30</option>
-                <option value="60">60</option>
-            </select>
-        </div>
-        <div>
             <label for="gametype" id="LABEL_GAMETYPE">Type of game:</label>
-            <select id="gametype">
-                <option value="2d" id="LABEL_GAMETYPE_2D">2D</option>
-                <option value="topdown" id="LABEL_GAMETYPE_TOPDOWN">Top-down perspective</option>
+            <select id="gametype" onchange="UpdateOptions()">
+                <option value="IRL" id="LABEL_GAMETYPE_IRL">IRL</option>
+                <option value="2D" id="LABEL_GAMETYPE_2D">2D</option>
+                <option value="TopDown" id="LABEL_GAMETYPE_TOPDOWN">Top-down perspective</option>
                 <option value="3rd" id="LABEL_GAMETYPE_THIRD">Third-person perspective</option>
                 <option value="1st" id="LABEL_GAMETYPE_FIRST">First-person perspective</option>
             </select>
         </div>
         <div>
-            <label id="LABEL_PREFERENCE">Prefer:</label>
-            <input type="checkbox" checked id="stable">
-            <label for="stable" id="LABEL_PREFERENCE_STABLE">Stable viewing</label>
-            <input type="checkbox" id="lower">
-            <label for="lower" id="LABEL_PREFERENCE_LOWER">Lower bitrate</label>
+            <label for="options" id="LABEL_OPTIONS">Quality:</label>
+            <select id="options" onchange="UpdateStableCheckbox()"></select>
         </div>
-        <button onclick="Calc()" id="LABEL_CALCULATE">Calculate</button>
+        <div id="stablecheckbox">
+            <label for="stable" id="LABEL_PREFERENCE_STABLE">Stable viewing:</label>
+            <input type="checkbox" id="stable" onchange="Output()">
+        </div>
         <div id="output"></div>
     </body>
 </html>
