@@ -27,7 +27,7 @@ const TABLE = {
         },
         [TEXT.OPTION.MID]: {
             'resolution': '1280x720',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 3500,
             'vbs': false,
             'defaultMax': null,
@@ -36,7 +36,7 @@ const TABLE = {
         },
         [TEXT.OPTION.HIGH]: {
             'resolution': '1920x1080',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 4500,
             'vbs': false,
             'defaultMax': null,
@@ -64,7 +64,7 @@ const TABLE = {
         'stable': true,
         [TEXT.OPTION.LOW]: {
             'resolution': '1280x720',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 3000,
             'vbs': true,
             'defaultMax': 5000,
@@ -104,12 +104,13 @@ const TABLE = {
             TEXT.OPTION.LOW,
             TEXT.OPTION.MID,
             TEXT.OPTION.HIGH,
+            TEXT.OPTION.VERYHIGH,
         ],
         'default': TEXT.OPTION.MID,
         'stable': true,
         [TEXT.OPTION.LOW]: {
             'resolution': '1280x720',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 3500,
             'vbs': true,
             'defaultMax': 5000,
@@ -118,7 +119,7 @@ const TABLE = {
         },
         [TEXT.OPTION.MID]: {
             'resolution': '1920x1080',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 4500,
             'vbs': true,
             'defaultMax': 6000,
@@ -134,6 +135,15 @@ const TABLE = {
             'stable': true,
             'stableMax': 7000,
         },
+        [TEXT.OPTION.VERYHIGH]: {
+            'resolution': '1920x1080',
+            'framerate': 60,
+            'bitrate': 7500,
+            'vbs': true,
+            'defaultMax': 9500,
+            'stable': false,
+            'stableMax': null,
+        },
     },
     '3rd': {
         'options': [
@@ -145,7 +155,7 @@ const TABLE = {
         'stable': true,
         [TEXT.OPTION.LOW]: {
             'resolution': '1920x1080',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 4000,
             'vbs': true,
             'defaultMax': 5500,
@@ -181,7 +191,7 @@ const TABLE = {
         'stable': true,
         [TEXT.OPTION.LOW]: {
             'resolution': '1280x720',
-            'framerate': 45,
+            'framerate': 40,
             'bitrate': 4500,
             'vbs': true,
             'defaultMax': 5500,
