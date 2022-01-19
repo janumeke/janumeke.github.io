@@ -1,25 +1,25 @@
 const LOCALIZATION = {
     "TITLE": "推薦位元速率",
     "LABEL": {
-        "RESOLUTION": "解析度",
-        "FRAMERATE": "FPS",
         "GAMETYPE": {
             0: "遊戲類型",
             "IRL": "IRL",
+            "Text": "文字",
+            "Pixel": "像素風格",
             "2D": "2D",
             "TopDown": "俯瞰視角",
             "3rd": "第三人稱視角",
             "1st": "第一人稱視角",
         },
-        "OPTIONS": "品質",
-        "PREFERENCE": {
-            0: "偏好",
-            "STABLE": "穩定觀看",
-            "LOWER": "更低位元速率",
+        "OPTIONS": {
+            0: "品質",
+            'Low': '稍差',
+            'Normal': '普通',
+            'Good': '稍好',
+            'Very Good': '很好',
         },
-        "RATECONTROL": "位元率控制",
-        "BITRATE": "位元速率",
+        "RESOLUTION": "解析度",
+        "AVGBITRATE": "平均位元速率",
         "MAXBITRATE": "最大位元速率",
-        "CALCULATE": "計算",
     },
 };

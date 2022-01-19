@@ -5,7 +5,7 @@
         <title>Bitrate Recommendations</title>
         <style type="text/css">
             div {
-                margin: 16px;
+                margin: 1em;
             }
             label {
                 margin-right: 1em;
@@ -13,9 +13,6 @@
             select {
                 font-size: 16px;
                 min-width: 4em;
-            }
-            button {
-                margin: 8px 16px;
             }
         </style>
         <script src="locale.js"></script>
@@ -25,12 +22,13 @@
                     document.title = LOCALIZATION.TITLE;
                     document.getElementById('LABEL_GAMETYPE').innerHTML = `${LOCALIZATION.LABEL.GAMETYPE[0]}:`;
                     document.getElementById('LABEL_GAMETYPE_IRL').innerHTML = LOCALIZATION.LABEL.GAMETYPE['IRL'];
+                    document.getElementById('LABEL_GAMETYPE_TEXT').innerHTML = LOCALIZATION.LABEL.GAMETYPE['Text'];
+                    document.getElementById('LABEL_GAMETYPE_PIXEL').innerHTML = LOCALIZATION.LABEL.GAMETYPE['Pixel'];
                     document.getElementById('LABEL_GAMETYPE_2D').innerHTML = LOCALIZATION.LABEL.GAMETYPE['2D'];
                     document.getElementById('LABEL_GAMETYPE_TOPDOWN').innerHTML = LOCALIZATION.LABEL.GAMETYPE['TopDown'];
                     document.getElementById('LABEL_GAMETYPE_THIRD').innerHTML = LOCALIZATION.LABEL.GAMETYPE['3rd'];
                     document.getElementById('LABEL_GAMETYPE_FIRST').innerHTML = LOCALIZATION.LABEL.GAMETYPE['1st'];
-                    document.getElementById('LABEL_OPTIONS').innerHTML = `${LOCALIZATION.LABEL.OPTIONS}:`;
-                    document.getElementById('LABEL_PREFERENCE_STABLE').innerHTML = `${LOCALIZATION.LABEL.PREFERENCE.STABLE}:`;
+                    document.getElementById('LABEL_OPTIONS').innerHTML = `${LOCALIZATION.LABEL.OPTIONS[0]}:`;
                 });
             }
         </script>
@@ -45,63 +43,38 @@
                 for(let option of TABLE[type].options){
                     const newOption = document.createElement('option');
                     newOption.value = option;
-                    newOption.text = option;
+                    if(typeof LOCALIZATION !== 'undefined'){
+                        newOption.text = LOCALIZATION.LABEL.OPTIONS[option];
+                    }
+                    else{
+                        newOption.text = option;
+                    }
                     options.appendChild(newOption);
                     if(option == TABLE[type].default){
                         newOption.selected = true;
-                        UpdateStableCheckbox();
+                        Output();
                     }
                 }
             }
             window.addEventListener('load', UpdateOptions);
 
-            function UpdateStableCheckbox(){
-                const type = document.querySelector('#gametype').value;
-                const option = document.querySelector('#options').value;
-                const stableCheckbox = document.querySelector('#stablecheckbox');
-                if(TABLE[type][option].stable){
-                    stableCheckbox.style.display = '';
-                }
-                else{
-                    stableCheckbox.style.display = 'none';
-                }
-                Output();
-            }
-
             function Output(){
                 const type = document.querySelector('#gametype').value;
                 const option = document.querySelector('#options').value;
-                const stable = document.querySelector('#stable').checked;
                 const output = document.querySelector('#output');
                 const params = TABLE[type][option];
                 if(typeof LOCALIZATION === 'undefined'){
-                    output.innerHTML = `Resolution: ${params.resolution}`;
-                    output.innerHTML += `<br>Frame rate: ${params.framerate}`;
-                    output.innerHTML += '<br>Rate Control: ';
-                    if(params.vbs){
-                        output.innerHTML += `VBR<br>Bitrate: ${params.bitrate} Kbps`;
-                        if(!params.stable || !stable)
-                            output.innerHTML += `<br>Max Bitrate: ${params.defaultMax} Kbps`;
-                        else
-                            output.innerHTML += `<br>Max Bitrate: ${params.stableMax} Kbps`;
-                    }
-                    else{
-                        output.innerHTML += `CBR<br>Bitrate: ${params.bitrate} Kbps`;
+                    output.innerHTML = `Resolution:&emsp;${params.resolution}p${params.framerate}`;
+                    output.innerHTML += `<br>Average Bitrate:&emsp;${params.avgBitrate}&nbsp;Kbps`;
+                    if(params.maxBitrate){
+                        output.innerHTML += `<br>Maximal Bitrate:&emsp;${params.maxBitrate}&nbsp;Kbps`;
                     }
                 }
                 else{
-                    output.innerHTML = `${LOCALIZATION.LABEL.RESOLUTION}: ${params.resolution}`;
-                    output.innerHTML += `<br>${LOCALIZATION.LABEL.FRAMERATE}: ${params.framerate}`;
-                    output.innerHTML += `<br>${LOCALIZATION.LABEL.RATECONTROL}: `;
-                    if(params.vbs){
-                        output.innerHTML += `VBR<br>${LOCALIZATION.LABEL.BITRATE}: ${params.bitrate} Kbps`;
-                        if(!params.stable || !stable)
-                            output.innerHTML += `<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${params.defaultMax} Kbps`;
-                        else
-                            output.innerHTML += `<br>${LOCALIZATION.LABEL.MAXBITRATE}: ${params.stableMax} Kbps`;
-                    }
-                    else{
-                        output.innerHTML += `CBR<br>${LOCALIZATION.LABEL.BITRATE}: ${params.bitrate} Kbps`;
+                    output.innerHTML = `${LOCALIZATION.LABEL.RESOLUTION}:&emsp;${params.resolution}p${params.framerate}`;
+                    output.innerHTML += `<br>${LOCALIZATION.LABEL.AVGBITRATE}:&emsp;${params.avgBitrate}&nbsp;Kbps`;
+                    if(params.maxBitrate){
+                        output.innerHTML += `<br>${LOCALIZATION.LABEL.MAXBITRATE}:&emsp;${params.maxBitrate}&nbsp;Kbps`;
                     }
                 }
             }
@@ -121,6 +94,8 @@
             <label for="gametype" id="LABEL_GAMETYPE">Type of game:</label>
             <select id="gametype" onchange="UpdateOptions()">
                 <option value="IRL" id="LABEL_GAMETYPE_IRL">IRL</option>
+                <option value="Text" id="LABEL_GAMETYPE_TEXT">Text</option>
+                <option value="Pixel" id="LABEL_GAMETYPE_PIXEL">Pixel art</option>
                 <option value="2D" id="LABEL_GAMETYPE_2D">2D</option>
                 <option value="TopDown" id="LABEL_GAMETYPE_TOPDOWN">Top-down perspective</option>
                 <option value="3rd" id="LABEL_GAMETYPE_THIRD">Third-person perspective</option>
@@ -129,12 +104,11 @@
         </div>
         <div>
             <label for="options" id="LABEL_OPTIONS">Quality:</label>
-            <select id="options" onchange="UpdateStableCheckbox()"></select>
+            <select id="options" onchange="Output()">
+            </select>
         </div>
-        <div id="stablecheckbox">
-            <label for="stable" id="LABEL_PREFERENCE_STABLE">Stable viewing:</label>
-            <input type="checkbox" id="stable" onchange="Output()">
+        <br>
+        <div id="output">
         </div>
-        <div id="output"></div>
     </body>
 </html>
