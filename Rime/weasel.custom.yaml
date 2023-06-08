@@ -1,0 +1,30 @@
+customization:
+  distribution_code_name: Weasel
+  distribution_version: 0.14.3
+  generator: "Weasel::UIStyleSettings"
+  modified_time: "Thu Jun  8 13:10:28 2023"
+  rime_version: 1.5.3
+patch:
+  "preset_color_schemes/micro":
+    name: Micro
+    border_color: 0xeaeaea
+    back_color: 0xf9f9f9
+    text_color: 0x000000
+    candidate_back_color: 0xf9f9f9
+    candidate_text_color: 0x000000
+    hilited_candidate_back_color: 0xf0f0f0
+    hilited_mark_color: 0x000000
+    hilited_candidate_text_color: 0x000000
+  style:
+    font_face: "微軟正黑體"
+    font_point: 14
+    label_format: "  %s"
+    label_font_face: "Noto Mono"
+    label_font_point: 14
+    inline_preedit: true
+    preedit_type: "preview"
+    layout: {
+      min_width: 100, min_height: 0, corner_radius: 8, border_width: 1, margin_x: 5, margin_y: 5, spacing: 5, 
+      candidate_spacing: 1, round_corner: 8, hilite_padding: 1, hilite_spacing: 10
+    }
+  "style/color_scheme": micro
