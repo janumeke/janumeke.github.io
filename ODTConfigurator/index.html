@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Office Configurator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="options.js"></script>
+    <script src="click.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLHMXN3HK9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-LLHMXN3HK9');
+    </script>
+</head>
+<body>
+    <h1>Office Deployment Tool Configurator</h1>
+    <label for="download">Download from:</label>
+    <input type="text" id="download" name="DownloadPath" placeholder="CDN">
+    <br>
+    <label for="source">Download to/Install from:</label>
+    <input type="text" id="source" name="SourcePath" placeholder=".\ or CDN">
+    <br>
+    <div id="product" name="Product">
+        <label for="productID">Product:</label>
+        <select id="productID" name="ID"></select>
+    </div>
+    <label for="edition">Edition:</label>
+    <select id="edition" name="OfficeClientEdition">
+        <option value="32">32-bit</option>
+        <option value="64" selected>64-bit</option>
+    </select>
+    <br>
+    <label for="exclude">Excludes:</label>
+    <div id="exclude">
+        <input type="checkbox" id="access" name="Access">
+        <label for="access">Access</label>
+        <input type="checkbox" id="bing" name="Bing">
+        <label for="bing">Microsoft Search in Bing</label>
+        <input type="checkbox" id="excel" name="Excel">
+        <label for="excel">Excel</label>
+        <input type="checkbox" id="onedrivebusiness" name="Groove">
+        <label for="onedrivebusiness">OneDrive for Business</label>
+        <input type="checkbox" id="skypebusiness" name="Lync">
+        <label for="skypebusiness">Skype for Business</label>
+        <input type="checkbox" id="onedrive" name="OnwDrive">
+        <label for="onedrive">OneDrive</label>
+        <input type="checkbox" id="onenote" name="OneNote">
+        <label for="onenote">OneNote</label>
+        <input type="checkbox" id="outlook" name="Outlook">
+        <label for="outlook">Outlook</label>
+        <input type="checkbox" id="powerpoint" name="PowerPoint">
+        <label for="powerpoint">PowerPoint</label>
+        <input type="checkbox" id="publisher" name="Publisher">
+        <label for="publisher">Publisher</label>
+        <input type="checkbox" id="teams" name="Teams">
+        <label for="teams">Teams</label>
+        <input type="checkbox" id="word" name="Word">
+        <label for="word">Word</label>
+    </div>
+    <label for="channel">Channel:</label>
+    <select id="channel" name="Channel">
+        <option value="BetaChannel">Beta</option>
+        <option value="CurrentPreview">Current (Preview)</option>
+        <option value="Current" selected>Current</option>
+        <option value="MonthlyEnterprise">Monthly Enterprise</option>
+        <option value="SemiAnnualPreview">Semi-Annual Enterprise (Preview)</option>
+        <option value="SemiAnnual">Semi-Annual Enterprise</option>
+        <option value="PerpetualVL2021">LTSC 2021 (Volumn Licensed)</option>
+        <option value="PerpetualVL2019">2019 (Volumn Licensed)</option>
+    </select>
+    <br>
+    <label for="version">Version:</label>
+    <input type="text" id="version" name="Version" placeholder="Latest">
+    <br>
+    <div id="language" name="Language">
+        <label for="languageID">Display Language:</label>
+        <select id="languageID" name="ID"></select>
+    </div>
+    <input type="checkbox" id="cdnFallback" name="AllowCdnFallback">
+    <label for="cdnFallback">Allow CDN for missing languages</label>
+    <br>
+    <label for="display">Installation Interface:</label>
+    <select id="display" name="Level">
+        <option value="None">None</option>
+        <option value="Full" selected>Normal</option>
+    </select>
+    <br>
+    <input type="checkbox" id="eula" name="AcceptEULA">
+    <label for="eula">EULA is accepted</label>
+    <br>
+    <input type="checkbox" id="pinTaskbar" name="PinIconsToTaskBar">
+    <label for="pinTaskbar">Add shortcuts to taskbar</label>
+    <br>
+    <input type="checkbox" id="update" name="Enabled">
+    <label for="update">Update after installation</label>
+    <br>
+    <label for="updatePath">Update from:</label>
+    <input type="text" id="updatePath" name="UpdatePath" placeholder="CDN">
+    <br>
+    <label for="updateChannel">Update Channel:</label>
+    <select id="updateChannel" name="Channel">
+        <option value="BetaChannel">Beta</option>
+        <option value="CurrentPreview">Current (Preview)</option>
+        <option value="Current" selected>Current</option>
+        <option value="MonthlyEnterprise">Monthly Enterprise</option>
+        <option value="SemiAnnualPreview">Semi-Annual Enterprise (Preview)</option>
+        <option value="SemiAnnual">Semi-Annual Enterprise</option>
+        <option value="PerpetualVL2021">LTSC 2021 (Volumn Licensed)</option>
+        <option value="PerpetualVL2019">2019 (Volumn Licensed)</option>
+    </select>
+    <br>
+    <input type="button" id="generateBtn" value="Generate">
+    <hr>
+    <input type="button" id="copyBtn" value="Copy" disabled>
+    <input type="button" id="downloadBtn" value="Download" disabled>
+    <br>
+    <textarea id="output" readonly></textarea>
+</body>
+</html>

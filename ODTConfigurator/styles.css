@@ -1,0 +1,29 @@
+body{
+    padding: 0px 0.5%;
+    font-size: 15px;
+}
+
+label{
+    margin-right: 0.1em;
+}
+
+input, select{
+    margin: 5px 2.5px 5px 7.5px;
+    padding: 1px 0.25em;
+    font-size: 14px;
+}
+
+input[type="button"]{
+    margin: 20px 0px 10px 5px;
+    padding: 8px 48px;
+    font-size: 16px;
+}
+
+hr{
+    margin: 10px 0px;
+}
+
+textarea{
+    height: 30em;
+    width: 50em;
+}
