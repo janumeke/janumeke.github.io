@@ -3,6 +3,10 @@ body{
     font-size: 15px;
 }
 
+h1{
+    font-size: 30px;
+}
+
 label{
     margin-right: 0.1em;
 }
@@ -26,4 +30,11 @@ hr{
 textarea{
     height: 30em;
     width: 50em;
+}
+
+@media (max-width: 50em){
+    textarea{
+        box-sizing: border-box;
+        width: 100%;
+    }
 }
