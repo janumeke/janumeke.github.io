@@ -1,18 +1,20 @@
 body{
-    padding: 0px 0.5%;
+    margin: 8px;
+    padding: 0 0.5vw;
     font-size: 15px;
 }
 
 h1{
+    margin: 2vh 0.1em;
     font-size: 30px;
 }
 
 label{
-    margin-right: 0.1em;
+    margin: 5px 0.1em;
 }
 
 input, select{
-    margin: 5px 2.5px 5px 7.5px;
+    margin: 5px 0px 5px 7.5px;
     padding: 1px 0.25em;
     font-size: 14px;
 }
@@ -24,17 +26,17 @@ input[type="button"]{
 }
 
 hr{
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 textarea{
+    box-sizing: border-box;
     height: 30em;
     width: 50em;
 }
 
-@media (max-width: 50em){
+@media (max-width: calc(50em + 16px + 1vw)){
     textarea{
-        box-sizing: border-box;
         width: 100%;
     }
 }
