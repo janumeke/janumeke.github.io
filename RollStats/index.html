@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>屬性骰子</title>
+        <style type="text/css">
+            body {
+                font-size: 16px;
+            }
+            div {
+                margin: 1em auto;
+            }
+            label {
+                margin-right: 1em;
+            }
+            select {
+                font-size: 16px;
+            }
+            input, button {
+                font-size: 15px;
+            }
+        </style>
+        <script src="alg.js"></script>
+        <script>
+            function UpdateOption(){
+                document.querySelector("#output").innerHTML = null;
+                switch(document.querySelector("#method").value){
+                    case "combo":
+                        document.querySelector("#description").innerText = "每種組合機率相同，再隨機順序。";
+                        break;
+                    case "allot":
+                        document.querySelector("#description").innerText = "每個數字有相同機率加一，直到總和相符。";
+                        break;
+                    case "range":
+                        document.querySelector("#description").innerText = "依序數字可能範圍內的每個值機率相同。";
+                        break;
+                    case "crook":
+                        document.querySelector("#description").innerHTML =
+                        `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>組合<th/>
+                                    <th>機率<th/>
+                                <tr/>
+                            <thead/>
+                            <tbody>
+                                <tr>
+                                    <td>4/4在任何位置<td/>
+                                    <td>12%<td/>
+                                <tr/>
+                                <tr>
+                                    <td>4/4在特定位置<td/>
+                                    <td>2%<td/>
+                                <tr/>
+                                <tr>
+                                    <td>4/4/5/12任意順序<td/>
+                                    <td>3%<td/>
+                                <tr/>
+                                <tr>
+                                    <td>4/4/5/12特定順序<td/>
+                                    <td>0.25%<td/>
+                                <tr/>
+                                <tr>
+                                    <td>4/5/5+任意順序<td/>
+                                    <td>32%<td/>
+                                <tr/>
+                                <tr>
+                                    <td>5/5/5+任意順序<td/>
+                                    <td>30%<td/>
+                                <tr/>
+                            <tbody/>
+                        </table>
+                        `;
+                        break;
+                }
+            }
+            window.addEventListener('load', UpdateOption);
+
+            function GRN(){
+                let count = parseInt(document.querySelector("#count").value);
+                if(isNaN(count) || count < 1)
+                    count = 1;
+                if(count > 100)
+                    count = 100;
+                document.querySelector("#count").value = count;
+
+                const method = document.querySelector("#method").value;
+                let numbers;
+                let numbersStrings = [];
+                for(let i = 1; i <= count; i++){
+                    switch(method){
+                        case "combo":
+                            numbers = GRN_COMBO();
+                            break;
+                        case "allot":
+                            numbers = GRN_ALLOT();
+                            break;
+                        case "range":
+                            numbers = GRN_RANGE();
+                            break;
+                        case "crook":
+                            numbers = GRN_CROOK();
+                            break;
+                    }
+                    numbersStrings[i - 1] = numbers.join(", ")
+                }
+                document.querySelector("#output").innerHTML = numbersStrings.join("<br/>");
+            }
+        </script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLHMXN3HK9"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-LLHMXN3HK9');
+        </script>
+    </head>
+    <body>
+        <p>隨機產生4個[4, 12]整數且和為25。</p>
+        <div>
+            <label for="method">方法:</label>
+            <select id="method" onchange="UpdateOption()">
+                <option value="combo">組合平均</option>
+                <option value="allot">分配平均</option>
+                <option value="range">範圍平均</option>
+                <option value="crook">特定機率</option>
+            </select>
+            <p id="description"></p>
+        </div>
+        <div>
+            <input type="number" id="count" min="1" max="100" value="1" />
+            <button typ="button" onclick="GRN()">產生</button>
+        </div>
+        <div id="output">
+        </div>
+    </body>
+</html>
