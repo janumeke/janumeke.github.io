@@ -14,14 +14,14 @@
                 stroke-width: 2px;
                 fill: transparent;
             }
-            .indexes {
+            .marks {
                 fill: black;
             }
-            .indexesBig{
+            .marksLarge{
                 --width: 1px;
                 --length-ratio: 0.1; /*ratio to clock radius*/
             }
-            .indexesSmall{
+            .marksSmall{
                 --width: 1px;
                 --length-ratio: 0.05; /*ratio to clock radius*/
             }
@@ -54,7 +54,7 @@
                 cy: calc(var(--clock-margin) + var(--clock-radius));
                 r: var(--clock-radius);
             }
-            .indexes {
+            .marks {
                 x: calc(var(--clock-margin) + var(--clock-radius) - var(--width) / 2);
                 y: var(--clock-margin);
                 width: var(--width);
@@ -68,64 +68,53 @@
             }
         </style>
         <script>
-            var indexes = [];
-            function CreateIndexes(){
-                const gIndexes = document.getElementById('gIndexes');
+            var marks = [];
+            function CreateMarks(){
+                const gMarks = document.getElementById('gMarks');
                 for(let i = 0; i < 60; i++){
-                    indexes[i] = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    indexes[i].classList.add('indexes');
+                    marks[i] = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    marks[i].classList.add('marks');
                     if(i % 5 == 0)
-                        indexes[i].classList.add('indexesBig');
+                        marks[i].classList.add('marksLarge');
                     else
-                        indexes[i].classList.add('indexesSmall');
-                    indexes[i].setAttribute('x', 104.5);
-                    indexes[i].setAttribute('y', 5);
-                    indexes[i].setAttribute('width', 1);
+                        marks[i].classList.add('marksSmall');
+                    marks[i].setAttribute('x', 104.5);
+                    marks[i].setAttribute('y', 5);
+                    marks[i].setAttribute('width', 1);
                     if(i % 5 == 0)
-                        indexes[i].setAttribute('height', 10);
+                        marks[i].setAttribute('height', 10);
                     else
-                        indexes[i].setAttribute('height', 5);
-                    indexes[i].setAttribute('transform', `rotate(${i * 6})`);
-                    indexes[i].setAttribute('transform-origin', 'center');
-                    gIndexes.appendChild(indexes[i]);
+                        marks[i].setAttribute('height', 5);
+                    marks[i].setAttribute('transform', `rotate(${i * 6})`);
+                    marks[i].setAttribute('transform-origin', 'center');
+                    gMarks.appendChild(marks[i]);
                 }
             }
-            function HideAllSmallIndexes(){
-                for(let i = 0; i < indexes.length; i++)
-                    if(indexes[i].classList.contains('indexesSmall'))
-                        indexes[i].style.setProperty('display', 'none');
+            function HideAllSmallMarks(){
+                for(let i = 0; i < marks.length; i++)
+                    if(marks[i].classList.contains('marksSmall'))
+                        marks[i].style.setProperty('display', 'none');
             }
-            function HideSmallIndexes(from, to){
-                from %= indexes.length;
-                to %= indexes.length;
+            function ShowSmallMarks(from, to){
+                from %= marks.length;
+                to %= marks.length;
                 if(from > to){
-                    for(let i = from; i < indexes.length; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.setProperty('display', 'none');
+                    for(let i = from; i < marks.length; i++)
+                        if(marks[i].classList.contains('marksSmall'))
+                            marks[i].style.removeProperty('display');
                     for(let i = 0; i <= to; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.setProperty('display', 'none');
+                        if(marks[i].classList.contains('marksSmall'))
+                            marks[i].style.removeProperty('display');
                 }
                 else
                     for(let i = from; i <= to; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.setProperty('display', 'none');
+                        if(marks[i].classList.contains('marksSmall'))
+                            marks[i].style.removeProperty('display');
             }
-            function ShowSmallIndexes(from, to){
-                from %= indexes.length;
-                to %= indexes.length;
-                if(from > to){
-                    for(let i = from; i < indexes.length; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.removeProperty('display');
-                    for(let i = 0; i <= to; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.removeProperty('display');
-                }
-                else
-                    for(let i = from; i <= to; i++)
-                        if(indexes[i].classList.contains('indexesSmall'))
-                            indexes[i].style.removeProperty('display');
+            function SetCurrentSmallMarks(){
+                HideAllSmallMarks();
+                const now = new Date();
+                ShowSmallMarks(Math.floor(now.getMinutes() / 5) * 5, Math.floor(now.getMinutes() / 5) * 5 + 5);
             }
         </script>
         <script>
@@ -143,16 +132,13 @@
                 document.getElementById('handSecond').setAttribute('transform', `rotate(${degSecond})`);
                 
                 if(now.getSeconds() == 0 && now.getMinutes() % 5 == 0){
-                    HideSmallIndexes(now.getMinutes() - 5, now.getMinutes());
-                    ShowSmallIndexes(now.getMinutes(), now.getMinutes() + 5);
+                    HideAllSmallMarks();
+                    ShowSmallMarks(now.getMinutes(), now.getMinutes() + 5);
                 }
             }
             document.addEventListener('DOMContentLoaded', (event) => {
-                CreateIndexes();
-                HideAllSmallIndexes();
-                const now = new Date();
-                ShowSmallIndexes(Math.floor(now.getMinutes() / 5) * 5, Math.floor(now.getMinutes() / 5) * 5 + 5);
-                
+                CreateMarks();
+                SetCurrentSmallMarks();
                 Update();
                 window.setInterval(Update, 1000);
             });
@@ -160,11 +146,12 @@
     </head>
     <body>
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
-            id="clock" width="210" height="210">
+            id="clock" width="210" height="210"
+            onclick="SetCurrentSmallMarks()">
             <!-- all centers are at 105, 105 -->
             <circle class="face" cx="105" cy="105" r="100" stroke="black" stroke-width="2" fill="transparent" />
-            <!-- indexes: x = "center x" - width / 2 -->
-            <g id="gIndexes"></g>
+            <!-- marks: x = "center x" - width / 2 -->
+            <g id="gMarks"></g>
             <!-- hands: x = "center x" - width /  2, y = "center y" + "tail length" - height -->
             <rect id="handHour" class="hands" x="103" y="55" width="4" height="55" transform="rotate(0)" transform-origin="center" />
             <rect id="handMinute" class="hands" x="103.5" y="30" width="3" height="80" transform="rotate(0)" transform-origin="center" />
