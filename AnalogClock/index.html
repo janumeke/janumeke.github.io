@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Analog Clock</title>
+        <style>
+            /*settings*/
+            :root {
+                --clock-radius: 100px;
+                --clock-margin: 5px;
+            }
+            .face {
+                stroke: black;
+                stroke-width: 2px;
+                fill: transparent;
+            }
+            .indexes {
+                fill: black;
+            }
+            .indexesBig{
+                --width: 1px;
+                --length-ratio: 0.1; /*ratio to clock radius*/
+            }
+            .indexesSmall{
+                --width: 1px;
+                --length-ratio: 0.05; /*ratio to clock radius*/
+            }
+            #handHour {
+                fill: black;
+                --width: 4px;
+                --length-ratio: 0.5; /*ratio to clock radius*/
+                --tail-length-ratio: 0.05; /*ratio to clock radius*/
+            }
+            #handMinute {
+                fill: black;
+                --width: 3px;
+                --length-ratio: 0.75; /*ratio to clock radius*/
+                --tail-length-ratio: 0.05; /*ratio to clock radius*/
+            }
+            #handSecond {
+                fill: black;
+                --width: 2px;
+                --length-ratio: 0.8; /*ratio to clock radius*/
+                --tail-length-ratio: 0.05; /*ratio to clock radius*/
+            }
+
+            /* don't change the following */
+            svg{
+                width: calc((var(--clock-margin) + var(--clock-radius)) * 2);
+                height: calc((var(--clock-margin) + var(--clock-radius)) * 2);
+            }
+            .face {
+                cx: calc(var(--clock-margin) + var(--clock-radius));
+                cy: calc(var(--clock-margin) + var(--clock-radius));
+                r: var(--clock-radius);
+            }
+            .indexes {
+                x: calc(var(--clock-margin) + var(--clock-radius) - var(--width) / 2);
+                y: var(--clock-margin);
+                width: var(--width);
+                height: calc(var(--length-ratio) * var(--clock-radius));
+            }
+            .hands{
+                x: calc(var(--clock-margin) + var(--clock-radius) - var(--width) / 2);
+                y: calc(var(--clock-margin) + var(--clock-radius) - var(--length-ratio) * var(--clock-radius));
+                width: var(--width);
+                height: calc((var(--length-ratio) + var(--tail-length-ratio)) * var(--clock-radius));
+            }
+        </style>
+        <script>
+            var indexes = [];
+            function CreateIndexes(){
+                const gIndexes = document.getElementById('gIndexes');
+                for(let i = 0; i < 60; i++){
+                    indexes[i] = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    indexes[i].classList.add('indexes');
+                    if(i % 5 == 0)
+                        indexes[i].classList.add('indexesBig');
+                    else
+                        indexes[i].classList.add('indexesSmall');
+                    indexes[i].setAttribute('x', 104.5);
+                    indexes[i].setAttribute('y', 5);
+                    indexes[i].setAttribute('width', 1);
+                    if(i % 5 == 0)
+                        indexes[i].setAttribute('height', 10);
+                    else
+                        indexes[i].setAttribute('height', 5);
+                    indexes[i].setAttribute('transform', `rotate(${i * 6})`);
+                    indexes[i].setAttribute('transform-origin', 'center');
+                    gIndexes.appendChild(indexes[i]);
+                }
+            }
+            function HideAllSmallIndexes(){
+                for(let i = 0; i < indexes.length; i++)
+                    if(indexes[i].classList.contains('indexesSmall'))
+                        indexes[i].style.setProperty('display', 'none');
+            }
+            function HideSmallIndexes(from, to){
+                from %= indexes.length;
+                to %= indexes.length;
+                if(from > to){
+                    for(let i = from; i < indexes.length; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.setProperty('display', 'none');
+                    for(let i = 0; i <= to; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.setProperty('display', 'none');
+                }
+                else
+                    for(let i = from; i <= to; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.setProperty('display', 'none');
+            }
+            function ShowSmallIndexes(from, to){
+                from %= indexes.length;
+                to %= indexes.length;
+                if(from > to){
+                    for(let i = from; i < indexes.length; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.removeProperty('display');
+                    for(let i = 0; i <= to; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.removeProperty('display');
+                }
+                else
+                    for(let i = from; i <= to; i++)
+                        if(indexes[i].classList.contains('indexesSmall'))
+                            indexes[i].style.removeProperty('display');
+            }
+        </script>
+        <script>
+            function FractionToDegree(num, denom){
+                return num / denom * 360;
+            }
+            function Update(){
+                const now = new Date();
+
+                const degHour = FractionToDegree(now.getHours() % 12 + now.getMinutes() / 60 + now.getSeconds() / 3600, 12);
+                const degMinute = FractionToDegree(now.getMinutes() + now.getSeconds() / 60, 60);
+                const degSecond = FractionToDegree(now.getSeconds(), 60);
+                document.getElementById('handHour').setAttribute('transform', `rotate(${degHour})`);
+                document.getElementById('handMinute').setAttribute('transform', `rotate(${degMinute})`);
+                document.getElementById('handSecond').setAttribute('transform', `rotate(${degSecond})`);
+                
+                if(now.getSeconds() == 0 && now.getMinutes() % 5 == 0){
+                    HideSmallIndexes(now.getMinutes() - 5, now.getMinutes());
+                    ShowSmallIndexes(now.getMinutes(), now.getMinutes() + 5);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', (event) => {
+                CreateIndexes();
+                HideAllSmallIndexes();
+                const now = new Date();
+                ShowSmallIndexes(Math.floor(now.getMinutes() / 5) * 5, Math.floor(now.getMinutes() / 5) * 5 + 5);
+                
+                Update();
+                window.setInterval(Update, 1000);
+            });
+        </script>
+    </head>
+    <body>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+            id="clock" width="210" height="210">
+            <!-- all centers are at 105, 105 -->
+            <circle class="face" cx="105" cy="105" r="100" stroke="black" stroke-width="2" fill="transparent" />
+            <!-- indexes: x = "center x" - width / 2 -->
+            <g id="gIndexes"></g>
+            <!-- hands: x = "center x" - width /  2, y = "center y" + "tail length" - height -->
+            <rect id="handHour" class="hands" x="103" y="55" width="4" height="55" transform="rotate(0)" transform-origin="center" />
+            <rect id="handMinute" class="hands" x="103.5" y="30" width="3" height="80" transform="rotate(0)" transform-origin="center" />
+            <rect id="handSecond" class="hands" x="104" y="25" width="2" height="85" transform="rotate(0)" transform-origin="center" />
+      </svg>
+    </body>
+</html>

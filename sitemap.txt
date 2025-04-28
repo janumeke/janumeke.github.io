@@ -1,3 +1,4 @@
 https://janumeke.github.io/NVENCBitrates/index.html
 https://janumeke.github.io/ODTConfigurator/index.html
 https://janumeke.github.io/RollStats/index.html
+https://janumeke.github.io/AnalogClock/index.html
