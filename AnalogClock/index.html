@@ -90,31 +90,43 @@
                     gMarks.appendChild(marks[i]);
                 }
             }
-            function HideAllSmallMarks(){
-                for(let i = 0; i < marks.length; i++)
-                    if(marks[i].classList.contains('marksSmall'))
-                        marks[i].style.setProperty('display', 'none');
-            }
-            function ShowSmallMarks(from, to){
+            function SetSmallMarksVisibility(from, to, visible){
                 from %= marks.length;
                 to %= marks.length;
                 if(from > to){
                     for(let i = from; i < marks.length; i++)
                         if(marks[i].classList.contains('marksSmall'))
-                            marks[i].style.removeProperty('display');
+                            if(visible)
+                                marks[i].style.removeProperty('display');
+                            else
+                                marks[i].style.setProperty('display', 'none');
                     for(let i = 0; i <= to; i++)
                         if(marks[i].classList.contains('marksSmall'))
-                            marks[i].style.removeProperty('display');
+                            if(visible)
+                                marks[i].style.removeProperty('display');
+                            else
+                                marks[i].style.setProperty('display', 'none');
                 }
                 else
                     for(let i = from; i <= to; i++)
                         if(marks[i].classList.contains('marksSmall'))
-                            marks[i].style.removeProperty('display');
+                            if(visible)
+                                marks[i].style.removeProperty('display');
+                            else
+                                marks[i].style.setProperty('display', 'none');
+            }
+            function HideSmallMarks(from, to){
+                SetSmallMarksVisibility(from, to, false);
+            }
+            function ShowSmallMarks(from, to){
+                SetSmallMarksVisibility(from, to, true);
             }
             function SetCurrentSmallMarks(){
-                HideAllSmallMarks();
                 const now = new Date();
-                ShowSmallMarks(Math.floor(now.getMinutes() / 5) * 5, Math.floor(now.getMinutes() / 5) * 5 + 5);
+                const prevLarge = Math.floor(now.getMinutes() / 5) * 5;
+                const nextLarge = prevLarge + 5;
+                HideSmallMarks(nextLarge, prevLarge);
+                ShowSmallMarks(prevLarge, nextLarge);
             }
         </script>
         <script>
@@ -123,7 +135,6 @@
             }
             function Update(){
                 const now = new Date();
-
                 const degHour = FractionToDegree(now.getHours() % 12 + now.getMinutes() / 60 + now.getSeconds() / 3600, 12);
                 const degMinute = FractionToDegree(now.getMinutes() + now.getSeconds() / 60, 60);
                 const degSecond = FractionToDegree(now.getSeconds(), 60);
@@ -131,14 +142,10 @@
                 document.getElementById('handMinute').setAttribute('transform', `rotate(${degMinute})`);
                 document.getElementById('handSecond').setAttribute('transform', `rotate(${degSecond})`);
                 
-                if(now.getSeconds() == 0 && now.getMinutes() % 5 == 0){
-                    HideAllSmallMarks();
-                    ShowSmallMarks(now.getMinutes(), now.getMinutes() + 5);
-                }
+                SetCurrentSmallMarks();
             }
             document.addEventListener('DOMContentLoaded', (event) => {
                 CreateMarks();
-                SetCurrentSmallMarks();
                 Update();
                 window.setInterval(Update, 1000);
             });
@@ -146,8 +153,7 @@
     </head>
     <body>
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
-            id="clock" width="210" height="210"
-            onclick="SetCurrentSmallMarks()">
+            id="clock" width="210" height="210">
             <!-- all centers are at 105, 105 -->
             <circle class="face" cx="105" cy="105" r="100" stroke="black" stroke-width="2" fill="transparent" />
             <!-- marks: x = "center x" - width / 2 -->

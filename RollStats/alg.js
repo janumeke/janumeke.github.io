@@ -4,7 +4,8 @@ const combos = [
     [4, 6, 6, 9], [4, 6, 7, 8],
     [4, 7, 7, 7],
     [5, 5, 5, 10], [5, 5, 6, 9], [5, 5, 7, 8],
-    [5, 6, 6, 8], [5, 6, 7, 7], [6, 6, 6, 7],
+    [5, 6, 6, 8], [5, 6, 7, 7],
+    [6, 6, 6, 7],
 ];
 
 function GRN_COMBO(){
@@ -25,7 +26,7 @@ function GRN_ALLOT(){
         let j = 0;
         while(numbers[j] >= 12)
             j++;
-        while(rn > 0){
+        while(rn > 0 || numbers[j] >= 12){
             if(numbers[j] < 12)
                 rn--;
             j++;
@@ -54,45 +55,79 @@ function GRN_RANGE(){
 
 function GRN_CROOK(){
     let numbers = [];
-    //4/4: 12%, 4/5 or 5/4: 32%, 5/5: 30%
-    let rn = Math.random();
-    let low;
-    if(rn < 0.12){
+    let rn;
+    /*
+        4, 4: 50% * 24% = 12%
+        4, 5: 50% * 47% = 23.5%
+        4, 6: 50% * 19% = 9.5%
+        4, 7: 50% * 10% = 5%
+        5, 5: 41% * 59% = 24.19%
+        5, 6: 41% * 41% = 16.81%
+        6, 6: 9%
+    */
+    rn = Math.random();
+    if(rn < 0.5){
         numbers[0] = 4;
-        numbers[1] = 4;
-        low = 5;
+        rn = Math.random();
+        if(rn < 0.24)
+            numbers[1] = 4;
+        else if(rn < 0.71)
+            numbers[1] = 5;
+        else if(rn < 0.9)
+            numbers[1] = 6;
+        else
+            numbers[1] = 7;
     }
-    else if(rn < 0.44){
-        numbers[0] = 4;
-        numbers[1] = 5;
-        low = 5;
-    }
-    else if(rn < 0.74){
+    else if(rn < 0.91){
         numbers[0] = 5;
-        numbers[1] = 5;
-        low = 5;
+        rn = Math.random();
+        if(rn < 0.59)
+            numbers[1] = 5;
+        else
+            numbers[1] = 6;
     }
     else{
-        numbers[0] = _grn(4, 6);
-        numbers[1] = _grn(6, 7);
-        low = 6;
+        numbers[0] = 6;
+        numbers[1] = 6;
     }
-    let high = 25 - numbers[0] - numbers[1] - low;
-    if(high > 12)
-        high = 12;
+    /*
+    n3 + n4 = a fixed number and n4 has an upper limit, so n3 has a lower limit
+        n4 <= 12
+        n3 = 25 - n1 - n2 - n4
+        ==>>
+        n3 >= 25 - n1 - n2 - 12
+    */
+    let low = Math.max(numbers[1], 25 - numbers[0] - numbers[1] - 12);
+    /*
+    n3 + n4 = a fixed number and n3 <= n4, so n3 <= half the number
+        n3 + n4 = 25 - n1 - n2
+        n3 <= n4
+        ==>>
+        n3 + n3 <= 25 - n1 - n2
+    n1 >= 4 and n2 >= 4, so n3 + n4 <= 17, so n3 <= 8.5
+        n1, n2 >= 4
+        ==>>
+        25 - n1 - n2 <= 17
+        ==>>
+        n3 <= 8.5
+    */
+    let high = Math.floor((25 - numbers[0] - numbers[1]) / 2);
     numbers[2] = _grn(low, high);
     numbers[3] = 25 - numbers[0] - numbers[1] - numbers[2];
     numbers = _ro(numbers);
     return numbers;
 }
 
-//return a random [from, to] number
+//return a random [from, to] integral
 function _grn(from, to){
     if(from > to)
         [from, to] = [to, from];
+    from = Math.ceil(from);
+    to = Math.floor(to);
     return Math.floor(Math.random() * (to - from + 1)) + from;
 }
 
+//return a copy of array in random order
 function _ro(array){
     for(let i = 0; i <= array.length - 2; i++){
         let rn = _grn(i, array.length - 1);
